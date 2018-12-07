@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ void CharCounter (const string& in, bool& hasDoubleChar, bool& hasTripleChar)
 
 	int letterCounts[26] = {0};
 
-	for (size_t idx = 0; idx < in.length(); idx++)
+	for (size_t idx = 0; idx < in.size(); idx++)
 	{
 		char curr = in[idx];
 		letterCounts[(int)(curr - 'a')]++;
@@ -42,6 +43,76 @@ void CharCounter (const string& in, bool& hasDoubleChar, bool& hasTripleChar)
 	cout << endl;
 
 }
+
+int IndexOfFirstDiff (const string& strA, const string& strB)
+{
+        if (strA.size() != strB.length())
+                return -2;
+
+        for (unsigned int i = 0; i < strA.size(); i++)
+        {
+                if (strA[i] != strB[i])
+			return i;
+        }
+
+	return -1;
+}
+
+bool IsOnlyDifferentByOne (const string& strA, const string& strB)
+{
+	if (strA.size() != strB.length())
+		return false;
+
+	int numdiffs = 0;
+	for (unsigned int i = 0; i < strA.size(); i++)
+	{
+		if (strA[i] != strB[i])
+			numdiffs++;
+	}
+
+	if (numdiffs == 0)
+		cout << " **** WARNING ++++ EXACTLY THE SAME STRINGS: " << strA << " <=> " << strB << endl;
+
+	return (numdiffs == 1);
+}
+		
+
+bool FindOffByOnePair (const std::vector<string>& listOfStrings, int startIndex, int& nearMatchAIndex, int& nearMatchBIndex)
+{
+	if (startIndex >= listOfStrings.size() - 1)
+	{
+		// if this is the last index, return 
+              nearMatchAIndex = -99;
+                nearMatchBIndex = -101;
+                return false;
+        }
+
+	for (unsigned int i=startIndex+1; i < listOfStrings.size(); i++)
+	{
+		if (IsOnlyDifferentByOne(listOfStrings[startIndex], listOfStrings[i]))
+		{
+			nearMatchAIndex = startIndex;
+			nearMatchBIndex = i;
+			return true;
+		}
+	}
+
+	startIndex++;
+	// else no near matches for this start index between the next and the end, so move on
+	return FindOffByOnePair (listOfStrings, startIndex, nearMatchAIndex, nearMatchBIndex);	
+}
+
+void FindCommonChars (const string& strA, const string& strB, string& common)
+{
+	common = "";
+
+	for (unsigned int i = 0; i < strA.size(); i++)
+	{
+		if (strA[i] == strB[i])
+			common += strA[i];
+	}
+}
+
 
 int main (int argc, char** argv)
 {
@@ -64,38 +135,27 @@ int main (int argc, char** argv)
 		return -1;
 	}
 	
-	unsigned long numStrWithDoubleChar = 0;
-	unsigned long numStrWithTripleChar = 0;	
 	unsigned long numLines = 0;	
 	string curr_line;
+	std::vector<string> lineList;
 
 	inputf >> curr_line;
 	while (inputf.good())
 	{
 		numLines++;
-		
-		bool hasDouble = false;
-		bool hasTriple = false;
-
-		CharCounter (curr_line, hasDouble, hasTriple);
-		if (hasDouble)
-			numStrWithDoubleChar++;
-		if (hasTriple)
-			numStrWithTripleChar++;
-
+		lineList.push_back(curr_line);
 		inputf >> curr_line; 
 	}
 
-	cout << endl;
-	cout << "Final string counts: with doubles=" << numStrWithDoubleChar << ", with triple=" << numStrWithTripleChar << ", multiplied =" << numStrWithDoubleChar * numStrWithTripleChar << endl;
-	cout << "Total lines processed: " << numLines << endl;
+	int start = 0;
+	int match1 =-21, match2 = -22;
+	string common;
+	bool foundi = false;
+	
+	foundi = FindOffByOnePair(lineList, start, match1, match2);
+	cout << " found a almost match? " << foundi << " locations: " << match1 << ", " << match2 << endl;
 
-	if (inputf.eof())
-	{
-		cout << "Ended because of EOF" << endl;
-		return 0;
-	}
-	// else
-	cout << "Ended because of another error" << endl;
-	return -2;
+	FindCommonChars(lineList[match1], lineList[match2], common);
+	cout << "Original strings <" << lineList[match1] << "> <" << lineList[match2] << ">, common characters: " << common << endl;
+
 }
