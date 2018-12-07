@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -39,24 +40,86 @@ int main (int argc, char** argv)
 	
 	int curr_loc = 0;
 	int lines = 0;
-	
+	std::vector<int> totals_history;
+	std::vector<int> motion_history;
+	bool found_history_match = false;
+	int match_value = -99;
+
+	totals_history.push_back(curr_loc);		
 	cout << endl << endl << curr_loc ;
 	
 		int curr_motion;
 		inputf >> curr_motion;
 	while (inputf.good())
 	{
+		motion_history.push_back(curr_motion);
+
 		curr_loc += curr_motion;
+		auto i = totals_history.cbegin();
+		while (i != totals_history.cend() && (*i) != curr_loc)
+			i++;
+
+		if (i != totals_history.cend())
+		
+		{
+			if (! found_history_match)
+			{
+				found_history_match = true;
+				match_value = curr_loc;
+			}
+		}
+
+		else
+		{
+			totals_history.push_back(curr_loc);
+		}
 		cout << "  + " << curr_motion << " = " << curr_loc;
 		lines++;
 		
 		inputf >> curr_motion;
+		if (lines % 10 == 0)
+			cout << endl;
+
 	}
+
+	while (!found_history_match)
+	{
+		for (auto p_curr_motion = motion_history.cbegin(); p_curr_motion != motion_history.cend(); p_curr_motion++)
+		{
+	             curr_loc += (*p_curr_motion);
+                auto i = totals_history.cbegin();
+                while (i != totals_history.cend() && (*i) != curr_loc)
+                        i++;
+
+                if (i != totals_history.cend())
+                {
+                        if (! found_history_match)
+                        {
+                                found_history_match = true;
+                                match_value = curr_loc;
+                        }
+                }
+               else
+                {
+                        totals_history.push_back(curr_loc);
+                }
+              cout << "  + " << curr_motion << " = " << curr_loc;
+                lines++;
+
+                inputf >> curr_motion;
+                if (lines % 10 == 0)
+                        cout << endl;
+		if (found_history_match)
+			break;
+		}
+        }
+
 
 	cout << endl;
 	cout << "Final location: " << curr_loc << endl;
 	cout << "Total lines processed: " << lines << endl;
-
+	cout << "First location repetition: " << match_value << endl;
+	cout << "Found a repetition? " << found_history_match << endl;	
 	if (inputf.eof())
 	{
 		cout << "Ended because of EOF" << endl;
