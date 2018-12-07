@@ -4,4 +4,4 @@
 CXX=clang++
 CXXFLAGS=-std=c++11 -Wall -pedantic
 
-day1-2: day1-2.cpp
+day2.out: day2.cpp
