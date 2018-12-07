@@ -18,10 +18,29 @@ void usage (char * appname)
 
 void CharCounter (const string& in, bool& hasDoubleChar, bool& hasTripleChar)
 {
-
-
 	hasDoubleChar = false;
 	hasTripleChar = false;
+
+	int letterCounts[26] = {0};
+
+	for (size_t idx = 0; idx < in.length(); idx++)
+	{
+		char curr = in[idx];
+		letterCounts[(int)(curr - 'a')]++;
+	}
+
+	for (int i = 0; i < 26; i++)
+	{
+		if (letterCounts[i] == 2)
+			hasDoubleChar = true;
+		if (letterCounts[i] == 3)
+			hasTripleChar = true;
+
+		cout << " " << (char)(i+'a') << "=>" << letterCounts[i];
+	}
+
+	cout << endl;
+
 }
 
 int main (int argc, char** argv)
@@ -68,7 +87,7 @@ int main (int argc, char** argv)
 	}
 
 	cout << endl;
-	cout << "Final string counts: with doubles=" << numStrWithDoubleChar << ", with triple=" << numStrWithTripleChar << ", sum=" << numStrWithDoubleChar + numStrWithTripleChar << endl;
+	cout << "Final string counts: with doubles=" << numStrWithDoubleChar << ", with triple=" << numStrWithTripleChar << ", multiplied =" << numStrWithDoubleChar * numStrWithTripleChar << endl;
 	cout << "Total lines processed: " << numLines << endl;
 
 	if (inputf.eof())
