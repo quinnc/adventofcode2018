@@ -43,19 +43,19 @@ int main (int argc, char** argv)
 	string curr_line;
 	Day3Part1 d3p1;
 
-	inputf >> curr_line;
-	while (inputf.good())
+	//inputf >> curr_line;
+	
+	while (std::getline(inputf, curr_line))
 	{
 		numLines++;
 			
 		
-		d3p1.process(curr_line);
-		inputf >> curr_line; 
+		d3p1.Process(curr_line);
 	}
 
-	cout << endl;
-	cout << "Final string counts: with doubles=" << numStrWithDoubleChar << ", with triple=" << numStrWithTripleChar << ", multiplied =" << numStrWithDoubleChar * numStrWithTripleChar << endl;
-	cout << "Total lines processed: " << numLines << endl;
+
+	d3p1.PrintResults();
+	cout << "Number of lines read = " << numLines << endl;
 
 	if (inputf.eof())
 	{

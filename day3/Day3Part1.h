@@ -5,20 +5,20 @@
 #include <map>
 
 typedef std::pair<int,int> Swatch;
-typedef std::map<Swatch,bool> Fabric;
+typedef std::map<Swatch,int> Fabric;
 
 class Day3Part1
 {
 public:
-	void Process(const string & curr_line);
+	void Process(const std::string & curr_line);
 	void PrintResults();
 
 private:
 	Fabric fabricClaims;
 	int multiusers;
 
-	bool ParseLine (const string& line, int& x, int& y, int& x_dist, int& y_dist);	
-}
+	bool ParseLine (const std::string& line, int& x, int& y, int& x_dist, int& y_dist);	
+};
 	
 #endif
 
