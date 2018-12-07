@@ -9,10 +9,10 @@ using namespace std;
 void usage (char * appname)
 {
 	cout << endl
-	<< argv[0] << " <filename>"
+	<< appname << " <filename>"
 	<< endl
-	<< "\t USAGE: "
-	<< "\t\t<filename> : name the input file as a parameter!" 
+	<< "\t USAGE: " << endl
+	<< "\t\t<filename> : name the input file as a parameter!"  << endl
 	<< std::endl;
 }
 
@@ -21,7 +21,7 @@ int main (int argc, char** argv)
 	if (argc != 2)
 	{
 		std::cout << endl
-			<< "ERROR: expected 1 argument, provided " << argc;
+			<< "ERROR: expected 1 argument, provided " << argc-1;
 		usage(argv[0]);
 		return -1;
 	}
@@ -42,22 +42,21 @@ int main (int argc, char** argv)
 	
 	cout << endl << endl << curr_loc ;
 	
+		int curr_motion;
+		inputf >> curr_motion;
 	while (inputf.good())
 	{
-		//char * line = new char(100) {0};
-		//int curr_motion;
-		//inputf.readline(line, 99);
-		
-		inputf >> curr_motion;
 		curr_loc += curr_motion;
 		cout << "  + " << curr_motion << " = " << curr_loc;
 		lines++;
 		
+		inputf >> curr_motion;
 	}
 
 	cout << endl;
 	cout << "Final location: " << curr_loc << endl;
-	cout << "Total lines processed: " << lines;
+	cout << "Total lines processed: " << lines << endl;
+
 	if (inputf.eof())
 	{
 		cout << "Ended because of EOF" << endl;
