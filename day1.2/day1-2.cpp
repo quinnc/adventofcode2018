@@ -38,17 +38,17 @@ int main (int argc, char** argv)
 		return -1;
 	}
 	
-	int curr_loc = 0;
+	long long curr_loc = 0;
 	int lines = 0;
-	std::vector<int> totals_history;
-	std::vector<int> motion_history;
+	std::vector<long long int> totals_history;
+	std::vector<long long int> motion_history;
 	bool found_history_match = false;
-	int match_value = -99;
+	long long int match_value = -99;
 
 	totals_history.push_back(curr_loc);		
 	cout << endl << endl << curr_loc ;
 	
-		int curr_motion;
+		long long int curr_motion;
 		inputf >> curr_motion;
 	while (inputf.good())
 	{
@@ -103,13 +103,15 @@ int main (int argc, char** argv)
                 {
                         totals_history.push_back(curr_loc);
                 }
-              cout << "  + " << curr_motion << " = " << curr_loc;
+              cout << "  + " << *p_curr_motion << " = " << curr_loc;
                 lines++;
 
-                inputf >> curr_motion;
                 if (lines % 10 == 0)
-                        cout << endl;
+                        cout << "   [lines processed: " << lines << "] " << endl;
 		if (found_history_match)
+			break;
+
+		if (lines > 5000)
 			break;
 		}
         }
