@@ -10,33 +10,61 @@ void Day3Part1::Process (const string& line)
 	int x, y, x_dist, y_dist;
 	int id;
 
+	//cout << "A" << endl;
 	if (ParseLine (line, id, x, y, x_dist, y_dist))
 	{
+		//cout << "B" << endl;
+
+		bool allFirsts = true;
 		for (int curr_x = x; curr_x < (x+x_dist); curr_x++)
 		{
+			//cout << "C curr x = " << curr_x << endl;
+
 			for (int curr_y = y; curr_y < (y+y_dist); curr_y++)
 			{
+				//cout << "D curr y = " << curr_y << endl;
+
 				Swatch currSwatch = make_pair(curr_x, curr_y);
-				this->fabricClaims[currSwatch]++;
+				auto swatchThere = this->fabricClaims.emplace(currSwatch, id);
+				//cout << " E " << endl;
+				
+				if (!swatchThere.second)
+				{
+					//cout << "F" << endl;
+					allFirsts = false;
+					unsharedIds.erase(swatchThere.first->second);
+				}
+				
+				//cout << "F" << endl;
 			}
 		}
+
+//		cout << " G' all firsts??? " << allFirsts << ", id=" << id << ", line=" << line << endl;
+		if (allFirsts)
+		{
+	//		cout << " list of unshared ids before=" << this->unsharedIds.size() << endl;
+			this->unsharedIds[id] = id;
+	//		cout << " size of unshared ids after adding current = " << this->unsharedIds.size() << endl;
+		}
+
+	//	cout << "G" << endl;
 	}
 	else
 	{
-		cout << "Unable to parse line: " << line << endl;
+		//cout << "Unable to parse line: " << line << endl;
 	}
+
+	//cout << " H" << endl;
 }
 
 void Day3Part1::PrintResults ()
 {
-	this->multiusers = 0;
-	for (const auto& s : this->fabricClaims)
+
+	for (const auto& id : this->unsharedIds)
 	{
-		if (s.second > 1)
-			this->multiusers++;
+		cout << " ID without any shared fabric: " << id.second << endl;
 	}
 
-	cout << "Number of square inches that were requested by multiple elves: " << this->multiusers << endl; 
 }
 
 
@@ -45,7 +73,7 @@ bool Day3Part1::ParseLine (const string& line, int& id, int& x, int& y, int& x_d
 	// first split on the spaces
 	// e.g. #1 @ 1,3: 4x4
 
-//	cout << " line to parse = " << line << endl;
+	//cout << " line to parse = " << line << endl;
 
 	std::vector<string> sections;
 	int curr_start = 0;
@@ -76,7 +104,7 @@ bool Day3Part1::ParseLine (const string& line, int& id, int& x, int& y, int& x_d
 #if 0
 	for (unsigned int i = 0; i < sections.size(); i++)
 	{
-		cout << " section " << i << " : [" << sections[i] << "]" << endl;
+		//cout << " section " << i << " : [" << sections[i] << "]" << endl;
 	}
 #endif
 	if (sections.size() != 4)
@@ -87,6 +115,8 @@ bool Day3Part1::ParseLine (const string& line, int& id, int& x, int& y, int& x_d
 
 	// section 1 contains the id
 	id = atoi(sections[0].substr(1).c_str());
+
+	//cout << "id = " << id << endl;
 	if (id <= 0)
 		return false;
 

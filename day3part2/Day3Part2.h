@@ -16,7 +16,7 @@ public:
 private:
 	Fabric fabricClaims;
 	int multiusers;
-
+ std::map<int,int> unsharedIds; // id
 	bool ParseLine (const std::string& line, int& id, int& x, int& y, int& x_dist, int& y_dist);	
 };
 	
