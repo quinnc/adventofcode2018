@@ -2,7 +2,7 @@
 #define _Parser_ 1
 
 #include <utility>
-#include <map>
+#include <list>
 
 
 class Parser
@@ -13,6 +13,12 @@ public:
 
 private:
 	bool ParseLine (const std::string& line, char & beforeTask, char& afterTask);	
+
+	std::list<char>::iterator InsertTask (char task, std::list<char>::iterator startPos);
+
+	void FindTask (char task,std::list<char>::iterator start, std::list<char>::iterator & pos);
+
+	std::list<char> opOrder;
 };
 	
 #endif
