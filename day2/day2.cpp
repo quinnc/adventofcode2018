@@ -16,6 +16,14 @@ void usage (char * appname)
 	<< std::endl;
 }
 
+void CharCounter (const string& in, bool& hasDoubleChar, bool& hasTripleChar)
+{
+
+
+	hasDoubleChar = false;
+	hasTripleChar = false;
+}
+
 int main (int argc, char** argv)
 {
 	if (argc != 2)
@@ -37,25 +45,31 @@ int main (int argc, char** argv)
 		return -1;
 	}
 	
-	int curr_loc = 0;
-	int lines = 0;
-	
-	cout << endl << endl << curr_loc ;
-	
-		int curr_motion;
-		inputf >> curr_motion;
+	unsigned long numStrWithDoubleChar = 0;
+	unsigned long numStrWithTripleChar = 0;	
+	unsigned long numLines = 0;	
+	string curr_line;
+
+	inputf >> curr_line;
 	while (inputf.good())
 	{
-		curr_loc += curr_motion;
-		cout << "  + " << curr_motion << " = " << curr_loc;
-		lines++;
+		numLines++;
 		
-		inputf >> curr_motion;
+		bool hasDouble = false;
+		bool hasTriple = false;
+
+		CharCounter (curr_line, hasDouble, hasTriple);
+		if (hasDouble)
+			numStrWithDoubleChar++;
+		if (hasTriple)
+			numStrWithTripleChar++;
+
+		inputf >> curr_line; 
 	}
 
 	cout << endl;
-	cout << "Final location: " << curr_loc << endl;
-	cout << "Total lines processed: " << lines << endl;
+	cout << "Final string counts: with doubles=" << numStrWithDoubleChar << ", with triple=" << numStrWithTripleChar << ", sum=" << numStrWithDoubleChar + numStrWithTripleChar << endl;
+	cout << "Total lines processed: " << numLines << endl;
 
 	if (inputf.eof())
 	{
