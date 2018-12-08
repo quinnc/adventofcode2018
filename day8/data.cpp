@@ -1,7 +1,11 @@
+#include <iostream>
+#include <fstream>
+#include <cstdio>
 
 #include "data.h"
+using namespace std;
 
-void Data::StartNew (ifstream& istr)
+void Data::StartNew (ifstream& iStr)
 {
 	iStr >> this->numChildren;
 	iStr >> this->numMetadatas;
@@ -12,10 +16,10 @@ void Data::StartNew (ifstream& istr)
 
 		this->children.push_back(child);
 
-		child.StartNew(istr);
+		child->StartNew(iStr);
 	}
 
-	for (int j = 0; j < this->newMetadatas; j++)
+	for (int j = 0; j < this->numMetadatas; j++)
 	{
 		int currMeta;
 		iStr >> currMeta;
@@ -32,10 +36,14 @@ int Data::SumMetadatas()
 		sum += this->metadatas[i];
 	}
 
-	for (int j = 0; i < this->numChildren; j++)
+	for (int j = 0; j < this->numChildren; j++)
 	{
-		sum += this->children[i]->SumMetadatas();
+		sum += this->children[j]->SumMetadatas();
 	}
 
 	return sum;
+}
+
+int Data::NodeValue ()
+{
 }

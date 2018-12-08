@@ -7,9 +7,9 @@ class Data;
 class Data
 {
 public:
-	void StartNew (ifstream & istr);
+	void StartNew (std::ifstream & istr);
 	int SumMetadatas ();
-
+	int NodeValue();
 private:	
 // header
 	int numChildren;

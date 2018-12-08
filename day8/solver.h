@@ -9,7 +9,7 @@ class Solver
 {
 
 public:
-	void Process (ifstream& iStr);
+	void Process (std::ifstream& iStr);
 	void PrintResults();
 private:
 	Data d;
