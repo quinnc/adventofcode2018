@@ -46,4 +46,31 @@ int Data::SumMetadatas()
 
 int Data::NodeValue ()
 {
+
+	int sum = 0;
+	if (this->numChildren == 0)
+	{
+	        for (int i = 0; i < this->numMetadatas; i++)
+        	{
+                	sum += this->metadatas[i];
+        	}
+	}
+	else
+	{
+		// else has children
+	        for (int i = 0; i < this->numMetadatas; i++)
+       		{
+			int currChild = this->metadatas[i];
+			currChild--;	
+			if (currChild >= this->numChildren)
+			{
+				//cout << " Curr child=" << currChild << ", but only have " << this->numChildren << endl;
+				continue;
+			}
+
+                	sum += this->children[currChild]->NodeValue();
+	 		//cout << " Sum is now = " << sum << endl;       
+		}
+	}
+	return sum;
 }

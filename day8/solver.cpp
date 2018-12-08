@@ -16,6 +16,9 @@ void Solver::PrintResults()
 	
 	int sum = d.SumMetadatas();
 	cout << " Sum of all the metadatas is: " << sum << endl;
+
+	sum = d.NodeValue();
+	cout << " Value of the node is: " << sum << endl;
 }
 
 
