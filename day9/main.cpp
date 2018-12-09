@@ -9,7 +9,7 @@
 using namespace std;
 
 
-void Shift (list<int>::iterator & loc, int shiftAmt, list<int>& circle)
+void Shift (list<long long int>::iterator & loc, long long int shiftAmt, list<long long int>& circle)
 {
 	if (shiftAmt < 0)
 	{
@@ -44,7 +44,7 @@ void Shift (list<int>::iterator & loc, int shiftAmt, list<int>& circle)
 	}
 }
 			
-void Show (list<int>::iterator curr, list<int> placed)
+void Show (list<long long int>::iterator curr, list<long long int> placed)
 {
 	for (auto it = placed.begin(); it != placed.end(); it++)
 	{
@@ -61,11 +61,11 @@ void Show (list<int>::iterator curr, list<int> placed)
 	cout << endl;
 }
 
-void ShowScores (vector<int> scores)
+void ShowScores (vector<long long int> scores)
 {
-	int user = 1;
-	int highest = 0;
-	int highScoreElf = -1;
+	long long int user = 1;
+	long long int highest = 0;
+	long long int highScoreElf = -1;
 
 	for (auto score : scores)
 	{
@@ -94,20 +94,20 @@ int main (int argc, char** argv)
 		return -1;
 	}
 
-	int numPlayers;
-	int highestMarble;
+	long long int numPlayers;
+	long long int highestMarble;
 
 	numPlayers = atoi(argv[1]);
 	highestMarble = atoi(argv[2]);
 
 	cout << " Game has " << numPlayers << " elves, going up to marble " << highestMarble << endl;
 
-	int currMarble = 0;
-	list<int> placedMarbles;
-	list<int>::iterator currMarbleLoc;
+	long long int currMarble = 0;
+	list<long long int> placedMarbles;
+	list<long long int>::iterator currMarbleLoc;
 
-	int currPlayer = 0;
-	vector<int> scores(numPlayers);
+	long long int currPlayer = 0;
+	vector<long long int> scores(numPlayers);
 
 	placedMarbles.push_back(currMarble);
 	currMarbleLoc = placedMarbles.begin();
@@ -156,6 +156,9 @@ int main (int argc, char** argv)
 			currPlayer = 0;
 		}
 	}
+	cout << "Current marble = " << currMarble << endl;
+	cout << "Current player = " << currPlayer << endl;
+	cout << "Value at current location = " << *currMarbleLoc << endl;
 
 	ShowScores(scores);
 	return 0;
