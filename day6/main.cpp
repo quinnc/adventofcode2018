@@ -21,6 +21,13 @@ typedef vector<pair<long long,long long>> LocList;
 
 typedef char** Map_t;
 
+bool LOGGING_ON=false;
+#define LOG(a) \
+	if (LOGGING_ON)\
+	{\
+		a ;\
+	}
+
 void LoadLocations(ifstream& infile, LocList& locations)
 {
 	string line;
@@ -31,7 +38,7 @@ void LoadLocations(ifstream& infile, LocList& locations)
 	{
 
 		long long loc = line.find(',');
-		cout << " Parsing string [" << line << "], split location = " << loc << endl;
+		//LOG (cout << " Parsing string [" << line << "], split location = " << loc << endl)
 		long long x = atoi(line.substr(0,loc).c_str());
 		long long y = atoi(line.substr(loc+2).c_str());
 
@@ -43,7 +50,7 @@ void LoadLocations(ifstream& infile, LocList& locations)
 		//cout << " Found x=" << x << ", y=" << y << endl;
 
 		locations.push_back(make_pair(x, y));
-		cout << "    X=" << x << ", Y=" << y << endl;
+		//cout << "    X=" << x << ", Y=" << y << endl;
 		
 		//infile.getline(line);
 		getline(infile, line);
@@ -70,7 +77,7 @@ void FindMaxes (LocList& locations, long long& maxX, long long& maxY)
 		}
 	}
 
-	cout << "MAX x = " << maxX << ", y=" << maxY << endl;
+	//cout << "MAX x = " << maxX << ", y=" << maxY << endl;
 
 }
 
@@ -108,8 +115,10 @@ bool CheckTwo (char checkChar, long long checkDist, char bChar, long long bDist)
 
 bool IsWinner (char checkChar, long long checkDist, char bChar, long long bDist, char cChar, long long cDist, char dChar, long long dDist)
 {
-	cout << "checking " << checkChar << "@" << checkDist << endl;
-	cout << "  b:" << bChar << "@" << bDist << ", c:" << cChar << "@" << cDist << ", d:" << dChar << "@" << dDist << endl;
+	LOG (cout << "IsWinner(): checking " << checkChar << "@" << checkDist << endl)
+	LOG (cout << "    against-  b:" << bChar << "@" << bDist << ", c:" << cChar << "@" << cDist << ", d:" << dChar << "@" << dDist << endl)
+	LOG (cout << endl)
+
 	if (checkChar == '-')
 		return false;
 
@@ -133,10 +142,10 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 	long long distLeft = dist;
 	long long int distRight = dist;
 
-	cout << "   Search @ " << currX << "," << currY << ", distance from start = " << dist << endl;
-	cout << "   Value @ location: " << map[currX][currY] << endl;
+	LOG (cout << "Search @ " << currX << "," << currY << ", distance from start = " << dist << endl)
+	LOG (cout << "   Value @ location: " << map[currX][currY] << endl)
 
-	map[currX][currY] = '+';
+//	map[currX][currY] = '+';
 
 	if (dist < 0)
 	{
@@ -240,18 +249,19 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 		letterUp = '-';
 	}
 
-
-
-	cout << "Down: " << letterDown << " @ " << distDown << endl;
-	cout << "Up  : " << letterUp   << " @ " << distUp   << endl;
-	cout << "Left: " << letterLeft << " @ " << distLeft << endl;
-	cout << "Rigt: " << letterRight<< " @ " << distRight<< endl;
+	LOG ( cout << endl )
+	LOG ( cout << " SEARCH FINISHED FOR: " << currX << "," << currY << " incoming dist=" << dist << ", final search limit=" << limit << endl)
+	LOG ( cout << "          Letters & distances: " << endl)
+	LOG ( cout << "\t\tDown: " << letterDown << " @ " << distDown << endl)
+	LOG ( cout << "\t\tUp  : " << letterUp   << " @ " << distUp   << endl)
+	LOG ( cout << "\t\tLeft: " << letterLeft << " @ " << distLeft << endl)
+	LOG ( cout << "\t\tRight: " << letterRight<< " @ " << distRight<< endl << endl)
 
 	// only left is valid, so must be it
 	if (IsWinner(letterLeft, distLeft, letterRight, distRight, letterUp, distUp, letterDown, distDown))
 	{
 		// found a valid letter to the left and all others are longer or invalid
-		cout << " LEFT woni" << endl;
+		LOG (cout << "\t\t\t LEFT won" << endl)
 		dist = distLeft;
 		return letterLeft;
 	}
@@ -260,7 +270,7 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 	// only right is valid, so must be it
 	if (IsWinner (letterRight, distRight, letterLeft, distLeft, letterUp, distUp, letterDown, distDown))
 	{
-		cout << " RIGHT won" << endl;
+		LOG (cout << "\t\t\t RIGHT won" << endl)
 		dist = distRight;
 		return letterRight;
 	}
@@ -268,7 +278,7 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 	// only down is valid
 	if (IsWinner (letterDown, distDown, letterRight, distRight, letterLeft, distLeft, letterUp, distUp))
 	{
-		cout << " DOWN won" << endl;
+		LOG (cout << "\t\t\t DOWN won" << endl)
 		dist = distDown;
 		return letterDown;
 	}
@@ -276,12 +286,13 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 	// only up
 	if (IsWinner (letterUp, distUp, letterRight, distRight, letterLeft, distLeft, letterDown, distDown))
 	{
-		cout << " UP won" << endl;
+		LOG ( cout << "\t\t\t UP won" << endl)
 		dist = distUp;
 		return letterUp;
 	}
 
-	cout << "// no clear winner" << endl;
+	LOG ( cout << "\t\t\t // no clear winner" << endl)
+
 	long long distUpDown;
 	long long distLeftRight;
 
@@ -327,7 +338,7 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 		dist = (distUpDown < distLeftRight? distUpDown : distLeftRight);
 	}
 	
-	cout << "  RETURING '-' @ " << dist << endl;
+	LOG (cout << "  RETURING '-' @ " << dist << endl)
 	return '-';
 	
 }
@@ -358,6 +369,15 @@ void SetShortestOwner (Map_t & map, long long maxX, long long maxY)
 				{
 					tmpMap[i][y] = map[i][y];
 				}
+			}
+
+			if (x == 1 && y == 4)
+			{
+				LOGGING_ON=true;
+			}
+			else
+			{
+				LOGGING_ON = false;
 			}
 
 			map[x][y] = FindNearestLocations(tmpMap, maxX, maxY, x, y, dist, maxX+maxY);
