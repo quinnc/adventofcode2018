@@ -21,7 +21,7 @@ typedef vector<pair<long long,long long>> LocList;
 
 typedef char** Map_t;
 
-bool LOGGING_ON=false;
+bool LOGGING_ON=true;
 #define LOG(a) \
 	if (LOGGING_ON)\
 	{\
@@ -142,10 +142,10 @@ char FindNearestLocations (Map_t map, long long maxX, long long maxY, long long 
 	long long distLeft = dist;
 	long long int distRight = dist;
 
-	LOG (cout << "Search @ " << currX << "," << currY << ", distance from start = " << dist << endl)
+	LOG (cout << "Search @ " << currX << "," << currY << ", distance from start = " << dist << ", total distance limit=" << limit << endl)
 	LOG (cout << "   Value @ location: " << map[currX][currY] << endl)
 
-//	map[currX][currY] = '+';
+	map[currX][currY] = '+';
 
 	if (dist < 0)
 	{
@@ -377,7 +377,7 @@ void SetShortestOwner (Map_t & map, long long maxX, long long maxY)
 			}
 			else
 			{
-				LOGGING_ON = false;
+			//	LOGGING_ON = false;
 			}
 
 			map[x][y] = FindNearestLocations(tmpMap, maxX, maxY, x, y, dist, maxX+maxY);

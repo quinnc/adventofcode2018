@@ -18,10 +18,13 @@ dirs:
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:%.cpp=%.o)
 
-all: $(BIN)
+all: ver2.out
+
+ver2.out : ver2.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 $(BIN): $(OBJ)
-	$(CXX) -o $(BIN) $^
+	$(CXX) $(CXXFLAGS) -o $(BIN) $^
 
 %.o: %.c
 	$(CXX) $@ -c $<
