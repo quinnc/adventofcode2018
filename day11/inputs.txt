@@ -1,0 +1,10 @@
+examples
+
+grid serial number => top left corner of highest total
+18 => 33,45
+42 => 21,61
+
+input
+1309 => ???
+
+
