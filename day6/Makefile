@@ -1,8 +1,8 @@
 #CXXFLAGS+=-Wc++11-extensions
-#CXX=g++
+CXX=g++
 
-CXX=clang++
-CXXFLAGS=-std=c++11 -Wall -pedantic -lpthread
+#CXX=clang++
+CXXFLAGS=-std=c++11 -Wall -pedantic -lpthread -O3
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
