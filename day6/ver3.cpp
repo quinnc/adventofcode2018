@@ -241,9 +241,9 @@ void AddCurrAddressesAndRecurse(Map_t map, long long startX, long long startY, l
 				if ( ! map[xnow][ynow].IsChecked())
 				{
 					locations.push_back(make_pair(xnow, ynow));
+					map[xnow][ynow].SetChecked();
 				}
-
-				map[xnow][ynow].SetChecked();
+				// else already searching in this directory, don't bother
 			}
 			else
 			{
@@ -254,20 +254,17 @@ void AddCurrAddressesAndRecurse(Map_t map, long long startX, long long startY, l
 	}
 }
 
-int BuildListToCheck (Map_t map, long long startX, long long startY, long long maxX, long long maxY, long long & distToLocation)
+int BuildListToCheck (Map_t tmpMap, long long startX, long long startY, long long maxX, long long maxY, long long & distToLocation)
 {
 
 	long long maxPath = maxX + maxY;
 	DEBUG ( " Building list of points to check: starting from " << startX << "," << startY << ", going down to a depth of " << distToLocation )
+	tmpMap[startX][startY].SetChecked();
+
 	for (long long depth = 1; depth <= maxPath; depth++)
 	{
 		LocList locationsToCheck;
 		std::set<int> found;
-
-		Map_t tmpMap;
-		CopyMap(map, tmpMap, maxX, maxY);
-
-		tmpMap[startX][startY].SetChecked();
 
 		AddCurrAddressesAndRecurse(tmpMap, startX, startY, maxX, maxY, depth, locationsToCheck);
 
@@ -282,7 +279,7 @@ int BuildListToCheck (Map_t map, long long startX, long long startY, long long m
 			long long x = loc.first;
 			long long y = loc.second;
 			//DEBUG ( " inserting " << map[x][y].id << " into the list" )
-			found.insert(map[x][y].id);
+			found.insert(tmpMap[x][y].id);
 		}
 
 		if (found.size() == 0)
@@ -393,7 +390,7 @@ void * threadRoutine (void * param)
 	
 	for (long long currY = 0; currY < data->maxY; currY++)
 	{
-		if (data->currX == currY)
+		if (data->currX == currY || (currY % 10) == 0)
 		{
 			cout << " Searching for nearest location to map coordinates " << data->currX << "," << currY << " thread=" << pthread_self() << endl;
 		}
@@ -407,7 +404,16 @@ void * threadRoutine (void * param)
 		long long distance = (data->maxX > data->maxY)?data->maxX:data->maxY;
 		DEBUG ( __FUNCTION__ << ":" << __LINE__ << " (" << pthread_self() << ")" )
 
-		ch = BuildListToCheck ((*globalMap), data->currX, currY, data->maxX, data->maxY, distance);
+
+		Map_t tmpMap;
+		CopyMap((*globalMap), tmpMap, data->maxX, data->maxY);
+		ch = BuildListToCheck (tmpMap, data->currX, currY, data->maxX, data->maxY, distance);
+		
+		for (int xdel = 0; xdel<data->maxX; xdel++)
+		{
+			delete [] (tmpMap[xdel]);
+		}
+		delete [] tmpMap;
 
 		DEBUG ( "at " << data->currX << "," << currY << " ch=" << ch << " --> " << (char)(ch - 'A' + 'a') << ", at distance=" << distance )
 		(*globalMap)[data->currX][currY].nearestLoc = ch;
@@ -425,8 +431,8 @@ void Ver2 (Map_t map, long long maxX, long long maxY)
 	{
 		pthread_t threads[8];
 		threadParam params[8];
-
-		for (long long xoffset = 0; xoffset < 8; xoffset++)
+		int xoffset = 0;
+		for (xoffset = 0; xoffset < 8; xoffset++)
 		{
 			if ( (currX + xoffset) < maxX)
 			{
@@ -441,18 +447,18 @@ void Ver2 (Map_t map, long long maxX, long long maxY)
 		//		pthread_join (threads[xoffset], (void**)&r2);
 		//		delete r2;
 			}
+			else 
+			{
+				break;
+			}
 		}
 
 #if 1
-		// created above, now wait for them all to finish
-		pthread_join (threads[0], NULL);
-		pthread_join (threads[1], NULL);
-		pthread_join (threads[2], NULL);
-		pthread_join (threads[3], NULL);
-		pthread_join (threads[4], NULL);
-		pthread_join (threads[5], NULL);
-		pthread_join (threads[6], NULL);
-		pthread_join (threads[7], NULL);
+		for (int offset = 0; offset < xoffset; offset++)
+		{
+			// created above, now wait for them all to finish
+			pthread_join (threads[offset], NULL);
+		}
 #endif	
 	}
 }
