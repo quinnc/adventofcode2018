@@ -2,12 +2,12 @@
 #CXX=g++
 
 CXX=clang++
-CXXFLAGS=-std=c++11 -Wall -pedantic
+CXXFLAGS=-std=c++11 -Wall -pedantic -lpthread
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
-BIN := $(current_dir).out
+BIN := $(current_dir).out ver3.out ver2.out
 
 dirs:
 	@echo 'make file path = $(mkfile_path)'
@@ -18,18 +18,19 @@ dirs:
 SRC=$(wildcard *.cpp)
 OBJ=$(SRC:%.cpp=%.o)
 
-all: ver2.out
+all: ver3.out
+
+
+ver3.out : ver3.cpp
+	$(CXX) $(CXXFLAGS) -o $@ $^
 
 ver2.out : ver2.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $^
-
-$(BIN): $(OBJ)
-	$(CXX) $(CXXFLAGS) -o $(BIN) $^
 
 %.o: %.c
 	$(CXX) $@ -c $<
 
 clean:
 	rm -f *.o
-	rm $(BIN)
+	rm -f $(BIN)
 
