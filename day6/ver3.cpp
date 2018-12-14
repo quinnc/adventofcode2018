@@ -9,6 +9,8 @@
 #include <map>
 #include <iomanip>
 
+#include <pthread.h>
+
 using namespace std;
 
 void printUsage ()
@@ -247,7 +249,10 @@ void AddCurrAddressesAndRecurse(Map_t map, long long startX, long long startY, l
 			}
 			else
 			{
-				map[xnow][ynow].SetChecked();
+				if (! map[xnow][ynow].IsChecked())
+				{
+B
+					map[xnow][ynow].SetChecked();
 				AddCurrAddressesAndRecurse(map, xnow, ynow, maxX, maxY, depth-1, locations);
 			}
 		}
