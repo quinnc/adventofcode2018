@@ -84,7 +84,7 @@ int MapPoint::MAX_LOC=0;
 
 typedef MapPoint** Map_t;
 
-bool LOGGING_ON=false;
+bool LOGGING_ON=true;
 #define LOG(a) \
 	if (LOGGING_ON)\
 	{\
@@ -251,9 +251,9 @@ void AddCurrAddressesAndRecurse(Map_t map, long long startX, long long startY, l
 			{
 				if (! map[xnow][ynow].IsChecked())
 				{
-B
 					map[xnow][ynow].SetChecked();
-				AddCurrAddressesAndRecurse(map, xnow, ynow, maxX, maxY, depth-1, locations);
+					AddCurrAddressesAndRecurse(map, xnow, ynow, maxX, maxY, depth-1, locations);
+				}
 			}
 		}
 	}
@@ -262,7 +262,7 @@ B
 int BuildListToCheck (Map_t tmpMap, long long startX, long long startY, long long maxX, long long maxY, long long & distToLocation)
 {
 
-	long long maxPath = maxX + maxY;
+	long long maxPath = /* ( (maxX>maxY)?maxX:maxY); // */ maxX + maxY;
 	DEBUG ( " Building list of points to check: starting from " << startX << "," << startY << ", going down to a depth of " << distToLocation )
 	tmpMap[startX][startY].SetChecked();
 
@@ -270,8 +270,18 @@ int BuildListToCheck (Map_t tmpMap, long long startX, long long startY, long lon
 	{
 		LocList locationsToCheck;
 		std::set<int> found;
+		
+		Map_t map2;
+
+		CopyMap(tmpMap, map2, maxX, maxY);
 
 		AddCurrAddressesAndRecurse(tmpMap, startX, startY, maxX, maxY, depth, locationsToCheck);
+
+		for (int xdel = 0; xdel< maxX; xdel++)
+                {
+                        delete [] (map2[xdel]);
+                }
+                delete [] map2;
 
 		if (locationsToCheck.size() == 0)
 		{
@@ -283,7 +293,7 @@ int BuildListToCheck (Map_t tmpMap, long long startX, long long startY, long lon
 		{
 			long long x = loc.first;
 			long long y = loc.second;
-			//DEBUG ( " inserting " << map[x][y].id << " into the list" )
+			DEBUG ( " inserting " << tmpMap[x][y].id << " into the list" )
 			found.insert(tmpMap[x][y].id);
 		}
 
@@ -292,30 +302,30 @@ int BuildListToCheck (Map_t tmpMap, long long startX, long long startY, long lon
 			DEBUG ( " ERROR: location " <<startX << "," << startY << " depth=" << depth << " had a found size of 0!" )
 			continue;
 		}
+                found.erase(-1);
+                DEBUG ( "after erased -1, size=" << found.size() )
 
-		if (found.size() == 1)
+		if (found.size() == 0)
 		{
 			// all bad
 			DEBUG ( "only one entry in the list " << *(found.begin()) )
 			continue;
 		}
 
-		if (found.size() == 2)
+		if (found.size() == 1)
 		{
 			int ch;
 
-			found.erase(-1);
-			DEBUG ( "after erased -1, size=" << found.size() )
 			ch = *(found.begin());
 			
 			// only one, so that's it
-			//cout << " Only one other character set: " << startX << "," << startY << ", letter=" << ch << ", depth=" << depth << endl;
+			cout << " Only one other character set: " << startX << "," << startY << ", letter=" << ch << ", depth=" << depth << endl;
 
 			distToLocation = depth;
 			return ch;
 		}
 
-		if ( found.size() > 2 )
+		if ( found.size() >= 2 )
 		{
 			distToLocation = depth;
 			return -1;
@@ -515,7 +525,7 @@ int main (int argc, char** argv)
 
 	Ver2(map, maxX, maxY);
 	DEBUG ( __FUNCTION__ << ":" << __LINE__ )
-	//PrintMap (map, maxX, maxY);
+	PrintMap (map, maxX, maxY);
 
 	DEBUG ( __FUNCTION__ << ":" << __LINE__ )
 	int areaId;
