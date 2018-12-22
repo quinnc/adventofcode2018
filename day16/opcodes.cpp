@@ -8,10 +8,10 @@ using namespace std;
 
 void OpCode::Init (const string & line)
 {
-	reg[0] = line[9];
-	reg[1] = line[12];
-	reg[2] = line[15];
-	reg[3] = line[18];
+	reg[0] = line[9] - '0';
+	reg[1] = line[12] - '0';;
+	reg[2] = line[15] - '0';
+	reg[3] = line[18] - '0';
 	cout << __FUNCTION__ << " input line: " << line << endl;
 	cout << "    parsed as -" << reg[0] << "-" << reg[1] << "-" << reg[2] << "-" << reg[3] << endl;
 
@@ -22,10 +22,10 @@ bool OpCode::DoResultsMatch (const string& line)
 	int t[4];
 
 	
-	t[0] = line[9];
-	t[1] = line[12];
-	t[2] = line[15];
-	t[3] = line[18];
+	t[0] = line[9] - '0';
+	t[1] = line[12] - '0';
+	t[2] = line[15] - '0';
+	t[3] = line[18] - '0';
 
 	cout << __FUNCTION__ << " input line: " << line << endl;
 	cout << "    parsed as -" << t[0] << "-" << t[1] << "-" << t[2] << "-" << t[3] << endl;
@@ -55,7 +55,7 @@ void AddR::Exec(const string& line)
 	regs[cmdC] = regs[cmdA] + regs[cmdB]
 }
 
-void AddI::Exec() 
+void AddI::Exec(const string& line) 
 {
 	int c[4];
 	SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -64,7 +64,7 @@ void AddI::Exec()
 }
 
 
-void MultR::Exec()
+void MultR::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -72,7 +72,7 @@ void MultR::Exec()
 	regs[c[3]] = regs[c[1]] * regs[c[2]];
 }
 
-void Multi::Exec()
+void Multi::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -82,7 +82,7 @@ void Multi::Exec()
 
 /* bit wise AND of 2 registers */
 //class BanR : public OpCode
-void BanR::Exec()
+void BanR::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -91,7 +91,7 @@ void BanR::Exec()
 }
 
 //class BandI : public OpCode
-void BandI::Exec()
+void BandI::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -101,7 +101,7 @@ void BandI::Exec()
 }
 
 /* bitwise OR */
-void BorR::Exec()
+void BorR::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -111,7 +111,7 @@ void BorR::Exec()
 }
 
 //class BorI : public OpCode
- void BorI::Exec()
+ void BorI::Exec(const string& line)
 {
 
        int c[4];
@@ -122,7 +122,7 @@ void BorR::Exec()
 
 /* store A in C (B is ignored) */
 //class SetR : public OpCode
-void SetR::Exec() 
+void SetR::Exec(const string& line) 
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -132,7 +132,7 @@ void SetR::Exec()
 }
 
 //class SetI : public OpCode
- void SetI::Exec()
+ void SetI::Exec(const string& line)
 {
 
        int c[4];
@@ -144,65 +144,59 @@ void SetR::Exec()
 
 /* greater than */
 //class GtIR : public OpCode
- void GtIR::Exec()
-{
+ void GtIR::Exec(const string& line)
+
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
         regs[c[3]] = ( (c[1] > regs[c[2]])? 1 : 0);
-
 }
 
 
 //class GtRI : public OpCode
- void GtRI::Exec() 
+ void GtRI::Exec(const string& line) 
 {
-
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
         regs[c[3]] = ( ( regs[c[1]] > c[2]) ? 1 : 0);
-
 }
 
 //class GtRR : public OpCode
- void GtRR::Exec() 
+ void GtRR::Exec(const string& line) 
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
         regs[c[3]] = ( (regs[c[1]] > regs[c[2]]) ? 1 : 0;
-
 }
 
 
 /* equal to */
 //class EqIR : public OpCode
- void EqIR::Exec() 
+ void EqIR::Exec(const string& line) 
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
         regs[c[3]] = ( (c[1] ==  regs[c[2]]) ? 1 : 0);
-
-
 }
 
-class EqRI : public OpCode
+//class EqRI : public OpCode
+void EqRI::Exec(const string& line)
 {
-public:
-	EqRI() : OpCode ("eqri") {}
-	virtual void Exec() override;
+	int c[4];
+	SplitLine (line, c[0],c[1],c[2],c[3]);
+	
+	regs[c[3]] = ( (regs[c[1]] == c[2]) ? 1 : 0 );
 }
 
-class EqRR : public OpCode
+//class EqRR : public OpCode
+void EqRR::Exec(const string& line)
 {
-public:
-	EqRR() : OpCode ("eqrr") {}
-	virtual void Exec() override;
+	int c[4];
+	SplitLine (line, c[0],c[1],c[2],c[3]);
+	
+	regs[c[3]] = ( (regs[c[1]] ==  regs[c[2]]) ? 1 : 0);
 }
-
-
-#endif
-
 
