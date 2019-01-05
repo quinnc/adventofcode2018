@@ -5,45 +5,113 @@
 #include <iostream>
 
 using namespace std;
+void OpCode::PrintInfo ()
+{
+	cout << __FUNCTION__ << ":" << __LINE__ << " OP= " << name << " - " << opNum << endl;
+}
+void OpCode::SetOpNum (int op)
+{
+	if (opNum != -1)
+	{
+		opNum = op;
+	}
+	else
+	{
+		opNum = opNum * 100 + op;
+		opNum = -1 * opNum;
+	}
+}
+
+ 
+void SplitRegs (const string& line, int &r1, int& r2, int& r3, int& r4)
+{
+        int start, end;
+
+        start = 9;
+        end = line.find(',', start);
+//	cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+        r1 = stoi (line.substr(start, end-start));
+
+        start = end+2;
+        end = line.find (',', start);
+  //      cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+
+        r2 =  stoi (line.substr(start, end-start));
+
+        start = end+2;
+        end = line.find (',', start);
+    //    cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+        r3 =  stoi (line.substr(start, end-start));
+
+        start = end+2;
+        end = line.find (']', start);
+      //  cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+        r4 =  stoi (line.substr(start, end-start));
+}
 
 void OpCode::Init (const string & line)
 {
-	reg[0] = line[9] - '0';
-	reg[1] = line[12] - '0';;
-	reg[2] = line[15] - '0';
-	reg[3] = line[18] - '0';
-	cout << __FUNCTION__ << " input line: " << line << endl;
-	cout << "    parsed as -" << reg[0] << "-" << reg[1] << "-" << reg[2] << "-" << reg[3] << endl;
-
+	SplitRegs(line, regs[0], regs[1], regs[2], regs[3]);
+//	cout << __FUNCTION__ << " input line: " << line << endl;
+//	cout << "    parsed as -" << regs[0] << "-" << regs[1] << "-" << regs[2] << "-" << regs[3] << endl;
 }
 
 bool OpCode::DoResultsMatch (const string& line)
 {
 	int t[4];
+	SplitRegs(line, t[0], t[1], t[2], t[3]);
+	cout << __FUNCTION__ << " OP [" << name << "]: results line:::" << line 
+		<< ":::   parsed as -" << t[0] << "-" << t[1] << "-" << t[2] << "-" << t[3] 
+		<< ", reg as -" << regs[0] << "-" << regs[1] << "-" << regs[2] << "-" << regs[3] << endl;
 
-	
-	t[0] = line[9] - '0';
-	t[1] = line[12] - '0';
-	t[2] = line[15] - '0';
-	t[3] = line[18] - '0';
-
-	cout << __FUNCTION__ << " input line: " << line << endl;
-	cout << "    parsed as -" << t[0] << "-" << t[1] << "-" << t[2] << "-" << t[3] << endl;
-
-	return (t[0] == reg[0] && t[1] == reg[1] && t[2] == reg[2] && t[3] == reg[3]);
+	bool isMatch = (t[0] == regs[0] && t[1] == regs[1] && t[2] == regs[2] && t[3] == regs[3]);
+/*
+	if (isMatch)
+	{
+		if (opNum == -1)
+		{
+			opNum = parsedOpNum;
+		}
+		else if (opNum != parsedOpNum)
+		{
+			opNum = -2;
+		}
+	}
+*/
+	return isMatch;
 }
 
 
 void OpCode::SplitLine(const string& line, int& op, int& arg1, int& arg2, int& arg3)
 {
+	int start, end;
 
-	op = line[0] - '0';
-	arg1 = line[2] - '0';
-	arg2 = line[4] - '0';
-	arg3 = line[6] - '0';
+	start = 0;
+	end = line.find(' ', start);
+    //   cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+ 	op = stoi (line.substr(start, end-start));
+	parsedOpNum = op;
 
-	cout << __FUNCTION__ << " input line: " << line << endl;
-	cout << "    parsed as -" << op << "-" << arg1 << "-" << arg2 << "-" << arg3 << endl;
+	start = end+1;
+	end = line.find (' ', start);
+//       cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+ 	arg1 =  stoi (line.substr(start, end-start));
+	//arg1 = line[2] - '0';
+	
+	start = end+1;
+        end = line.find (' ', start);
+  //     cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+         arg2 =  stoi (line.substr(start, end-start));
+	//arg2 = line[4] - '0';
+	
+	start = end+1;
+	end = line.find (' ', start);
+    //   cout << "start=" << start << ", end=" << end << ", substr=" << line.substr(start,end-start) << endl;
+	arg3 =  stoi (line.substr(start, end-start));
+	//arg3 = line[6] - '0';
+
+	//cout << __FUNCTION__ << " input line: " << line << endl;
+	//cout << "    parsed as -" << op << "-" << arg1 << "-" << arg2 << "-" << arg3 << endl;
 }
 
 /* op X Y Z: add contents of reg X to contents of reg Y and write to reg Z */
@@ -52,7 +120,7 @@ void AddR::Exec(const string& line)
 	int cmdA, cmdB, cmdC, cmdOp;
 	SplitLine(line, cmdOp, cmdA, cmdB, cmdC);
 
-	regs[cmdC] = regs[cmdA] + regs[cmdB]
+	regs[cmdC] = regs[cmdA] + regs[cmdB];
 }
 
 void AddI::Exec(const string& line) 
@@ -72,7 +140,7 @@ void MultR::Exec(const string& line)
 	regs[c[3]] = regs[c[1]] * regs[c[2]];
 }
 
-void Multi::Exec(const string& line)
+void MultI::Exec(const string& line)
 {
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
@@ -144,8 +212,8 @@ void SetR::Exec(const string& line)
 
 /* greater than */
 //class GtIR : public OpCode
- void GtIR::Exec(const string& line)
-
+void GtIR::Exec(const string& line)
+{
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
@@ -168,7 +236,7 @@ void SetR::Exec(const string& line)
        int c[4];
         SplitLine(line, c[0],c[1],c[2],c[3]);
 
-        regs[c[3]] = ( (regs[c[1]] > regs[c[2]]) ? 1 : 0;
+        regs[c[3]] = ( (regs[c[1]] > regs[c[2]]) ? 1 : 0);
 }
 
 

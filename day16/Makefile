@@ -23,7 +23,7 @@ all: $(BIN)
 $(BIN): $(OBJ)
 	$(CXX) -o $(BIN) $^
 
-%.o: %.c
+%.o: %.c %.h
 	$(CXX) $@ -c $<
 
 clean:
